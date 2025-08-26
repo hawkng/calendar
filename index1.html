@@ -1,31 +1,33 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>FullCalendar Example</title>
-  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.13/main.min.css' rel='stylesheet' />
-</head>
-<body>
-  <div id='calendar'></div>
+<div id="calendar"></div>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ical.js@1.4.0/build/ical.min.js"></script>
 
-  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.13/index.global.min.js'></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar');
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth', // Default view
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-       events: {
-          url: 'https://calendar.google.com/calendar/ical/386a50f6ae130a411245131347c2ee962de806bc2c71e551fde8759c0e071669%40group.calendar.google.com/private-cfb496a5285bf5e7f4825ecf27003914/basic.ics', // Paste the copied iCal URL here
-          format: 'ics' // Specify the format as iCal
-        }
-
-      });
-      calendar.render();
+<script>
+  async function fetchICS(url) {
+    let res = await fetch(url);
+    let text = await res.text();
+    let jcalData = ICAL.parse(text);
+    let comp = new ICAL.Component(jcalData);
+    let events = comp.getAllSubcomponents("vevent").map(vevent => {
+      let ev = new ICAL.Event(vevent);
+      return {
+        title: ev.summary,
+        start: ev.startDate.toString(),
+        end: ev.endDate.toString()
+      };
     });
-  </script>
-</body>
-</html>
+    return events;
+  }
+
+  document.addEventListener("DOMContentLoaded", async function () {
+    let events = await fetchICS("https://calendar.google.com/calendar/ical/386a50f6ae130a411245131347c2ee962de806bc2c71e551fde8759c0e071669%40group.calendar.google.com/private-cfb496a5285bf5e7f4825ecf27003914/basic.ics");
+
+    let calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+      initialView: "dayGridMonth",
+      events: events,
+      height: "auto"
+    });
+    calendar.render();
+  });
+</script>
