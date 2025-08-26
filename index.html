@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: [ 'dayGrid', 'timeGrid', 'list', 'ical' ], // Ensure 'ical' plugin is included if using an iCal feed
+        events: {
+          url: 'https://calendar.google.com/calendar/ical/386a50f6ae130a411245131347c2ee962de806bc2c71e551fde8759c0e071669%40group.calendar.google.com/private-cfb496a5285bf5e7f4825ecf27003914/basic.ics', // Paste the copied iCal URL here
+          format: 'ics' // Specify the format as iCal
+        }
+      });
+      calendar.render();
+    });
+	
+
+    </script>
+  </head>
+  <body>
+    <div id='calendar'></div>
+  </body>
+</html>
+
